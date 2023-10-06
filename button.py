@@ -11,6 +11,12 @@ class Button():
         self.rect.topleft = (x, y)
         self.clicked = False
 
+    def get_x(self):
+        return self.rect.x
+
+    def get_y(self):
+        return self.rect.y
+
     def draw(self, surface):
         action = False
         # get mouse position
