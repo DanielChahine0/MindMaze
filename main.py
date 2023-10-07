@@ -119,6 +119,11 @@ X_BTN_img = pygame.image.load(join("assets", "Buttons", "x_button.png")).convert
 X_BTN = button.Button(CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()-100,
                       CURRENT_WIN.get_y()+50, X_BTN_img, 0.2)
 
+check_BTN_img = pygame.image.load(join("assets", "Buttons", "check_button.png")).convert_alpha()
+check_BTN = button.Button(CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()//2-50,
+                          CURRENT_WIN.get_y()+CURRENT_WIN_img.get_height()-150, check_BTN_img, 0.2)
+
+
 # FUNCTIONS
 def draw_text(text, fonts, text_col, x, y):
     img = fonts.render(text, True, text_col)
@@ -284,6 +289,10 @@ def main(win):
                 if X_BTN.draw(win):
                     OPEN_WINDOW = False
                     MAIN_MENU = True
+                if check_BTN.draw(win):
+                    OPEN_WINDOW = False
+                    MAIN_MENU = True
+                    COINS += 25
 
 
 
