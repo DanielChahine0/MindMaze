@@ -107,9 +107,13 @@ COMP_BTN_img = pygame.image.load(join("assets", "Buttons", "black_button.png")).
 COMP_BTN = button.Button(MENUS_margin+LOGIC_BTN_img.get_width() * SCALE1 + LOGIC_BTN.get_x(), 30, COMP_BTN_img, SCALE1)
 
 # Make the levels for each subject
-ML1_img = pygame.image.load(join("assets", "Buttons", "Level.png")).convert_alpha()
-ML1 = button.Button(50, 100, ML1_img, 0.8)
-ML2 = button.Button(400, 275, ML1_img, 0.8)
+ML_img = pygame.image.load(join("assets", "Buttons", "Level.png")).convert_alpha()
+ML1 = button.Button(50, 100, ML_img, 0.8)
+ML2 = button.Button(400, 100, ML_img, 0.8)
+ML3 = button.Button(750, 100, ML_img, 0.8)
+ML4 = button.Button(50, 400, ML_img, 0.8)
+ML5 = button.Button(400, 400, ML_img, 0.8)
+ML6 = button.Button(750, 400, ML_img, 0.8)
 
 CURRENT_WIN_img = pygame.image.load(join("assets", "Buttons", "Level.png")).convert_alpha()
 CURRENT_WIN = button.Button(WIDTH//2-CURRENT_WIN_img.get_width()//2, 100,
@@ -279,8 +283,30 @@ def main(win):
 
                 if MATH_MENU:
                     if ML1.draw(win):
+                        DIFFICULTY = 1
                         OPEN_WINDOW = True
                         MAIN_MENU = False
+                    elif ML2.draw(win):
+                        DIFFICULTY = 2
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                    elif ML3.draw(win):
+                        DIFFICULTY = 3
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                    elif ML4.draw(win):
+                        DIFFICULTY = 4
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                    elif ML5.draw(win):
+                        DIFFICULTY = 5
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                    elif ML6.draw(win):
+                        DIFFICULTY = 6
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+
 
             elif OPEN_WINDOW:
                 CURRENT_WIN.draw(win)
