@@ -29,6 +29,8 @@ MAIN_MENU = True
 MATH_MENU = True
 LOGIC_MENU = False
 COMP_MENU = False
+OPEN_WINDOW = False
+DIFFICULTY = 0
 
 
 # Load Buttons & creating their parameters
@@ -106,15 +108,16 @@ COMP_BTN = button.Button(MENUS_margin+LOGIC_BTN_img.get_width() * SCALE1 + LOGIC
 
 # Make the levels for each subject
 ML1_img = pygame.image.load(join("assets", "Buttons", "Level.png")).convert_alpha()
-ML1 = button.Button(50, 100, ML1_img, SCALE1)
-ML = []
-for x in range(2):
-    for i in range(3):
-        ML.append(button.Button(20+i*400, 50+x*275, ML1_img, 0.8))
+ML1 = button.Button(50, 100, ML1_img, 0.8)
+ML2 = button.Button(400, 275, ML1_img, 0.8)
 
+CURRENT_WIN_img = pygame.image.load(join("assets", "Buttons", "Level.png")).convert_alpha()
+CURRENT_WIN = button.Button(WIDTH//2-CURRENT_WIN_img.get_width()//2, 100,
+                            CURRENT_WIN_img, 1)
 
-
-
+X_BTN_img = pygame.image.load(join("assets", "Buttons", "x_button.png")).convert_alpha()
+X_BTN = button.Button(CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()-100,
+                      CURRENT_WIN.get_y()+50, X_BTN_img, 0.2)
 
 # FUNCTIONS
 def draw_text(text, fonts, text_col, x, y):
@@ -149,8 +152,8 @@ def draw_background2(surface, number):
 
 # Defining the main method that will run and call everything
 def main(win):
-    global PAUSED, STORE, COINS, LOCKED1, LOCKED2, LOCKED3, LOCKED4, LOCKED5, LOCKED6, LOCKED7, MATH_MENU, LOGIC_MENU\
-        , COMP_MENU
+    global PAUSED, STORE, COINS, LOCKED1, LOCKED2, LOCKED3, LOCKED4, LOCKED5, LOCKED6, LOCKED7, MATH_MENU, LOGIC_MENU,\
+        COMP_MENU, OPEN_WINDOW, DIFFICULTY, MAIN_MENU
 
     # Get the background
     background, bg_image = get_background("Blue.png")
@@ -257,6 +260,7 @@ def main(win):
                     MATH_MENU = True
                     LOGIC_MENU = False
                     COMP_MENU = False
+                    OPEN_WINDOW = False
                 # If we press the Logic button for it's menu
                 if LOGIC_BTN.draw(win):
                     MATH_MENU = False
@@ -269,8 +273,19 @@ def main(win):
                     COMP_MENU = True
 
                 if MATH_MENU:
-                    for f in range(6):
-                        ML[f].draw(win)
+                    if ML1.draw(win):
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+
+            elif OPEN_WINDOW:
+                CURRENT_WIN.draw(win)
+                draw_text(str(DIFFICULTY), lock_font, WHITE, CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()//2,
+                          CURRENT_WIN.get_y()+CURRENT_WIN_img.get_height()//2)
+                if X_BTN.draw(win):
+                    OPEN_WINDOW = False
+                    MAIN_MENU = True
+
+
 
             # Display the number of coins
             draw_text(str(COINS) + " COINS", font, TEXT_COLOR, 10, HEIGHT - 60)
