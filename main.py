@@ -1,7 +1,9 @@
 import pygame
 import button
+import coin
 from os import listdir
 from os.path import isfile, join
+import time
 
 # Initialization and setting methods
 pygame.init()
@@ -15,6 +17,7 @@ TEXT_COLOR = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 # VARIABLES
+PRICE_BG = 25
 COINS = 0
 PAUSED = False
 STORE = False
@@ -31,6 +34,7 @@ LOGIC_MENU = False
 COMP_MENU = False
 OPEN_WINDOW = False
 DIFFICULTY = 0
+JET_LAG = 0.2
 
 
 # Load Buttons & creating their parameters
@@ -53,67 +57,69 @@ store_BTN = button.Button(WIDTH-store_BTN_img.get_width(), HEIGHT-store_BTN_img.
 BG_BTN_HEIGHT = 30
 BTN_BG_margin = 20
 
-BG1_BTN_img = pygame.image.load(join("assets", "Background1", "Blue.png")).convert_alpha()
+BG1_BTN_img = pygame.image.load(join("assets", "Background2", "1.jpg")).convert_alpha()
 BTN_X1 = BTN_BG_margin
-BG1_BTN = button.Button(BTN_X1, BG_BTN_HEIGHT, BG1_BTN_img, 1.5)
+BG1_BTN = button.Button(BTN_X1, BG_BTN_HEIGHT, BG1_BTN_img, 1)
 
-BG2_BTN_img = pygame.image.load(join("assets", "Background1", "Brown.png")).convert_alpha()
-BTN_X2 = BTN_X1 + BTN_BG_margin + BG1_BTN_img.get_width()*1.5
-BG2_BTN = button.Button(BTN_X2, BG_BTN_HEIGHT, BG2_BTN_img, 1.5)
+BG2_BTN_img = pygame.image.load(join("assets", "Background2", "2.jpg")).convert_alpha()
+BTN_X2 = BTN_X1 + BTN_BG_margin + BG1_BTN_img.get_width()
+BG2_BTN = button.Button(BTN_X2, BG_BTN_HEIGHT, BG2_BTN_img, 1)
 
-BG3_BTN_img = pygame.image.load(join("assets", "Background1", "Gray.png")).convert_alpha()
-BTN_X3 = BTN_X2 + BTN_BG_margin + BG2_BTN_img.get_width()*1.5
-BG3_BTN = button.Button(BTN_X3, BG_BTN_HEIGHT, BG3_BTN_img, 1.5)
+BG3_BTN_img = pygame.image.load(join("assets", "Background2", "3.jpg")).convert_alpha()
+BTN_X3 = BTN_X2 + BTN_BG_margin + BG2_BTN_img.get_width()*1
+BG3_BTN = button.Button(BTN_X3, BG_BTN_HEIGHT, BG3_BTN_img, 1)
 
-BG4_BTN_img = pygame.image.load(join("assets", "Background1", "Green.png")).convert_alpha()
-BTN_X4 = BTN_X3 + BTN_BG_margin + BG3_BTN_img.get_width()*1.5
-BG4_BTN = button.Button(BTN_X4, BG_BTN_HEIGHT, BG4_BTN_img, 1.5)
+BG4_BTN_img = pygame.image.load(join("assets", "Background2", "4.jpg")).convert_alpha()
+BTN_X4 = BTN_X3 + BTN_BG_margin + BG3_BTN_img.get_width()*1
+BG4_BTN = button.Button(BTN_X4, BG_BTN_HEIGHT, BG4_BTN_img, 1)
 
-BG5_BTN_img = pygame.image.load(join("assets", "Background1", "Pink.png")).convert_alpha()
-BTN_X5 = BTN_X4 + BTN_BG_margin + BG4_BTN_img.get_width()*1.5
-BG5_BTN = button.Button(BTN_X5, BG_BTN_HEIGHT, BG5_BTN_img, 1.5)
+BG5_BTN_img = pygame.image.load(join("assets", "Background2", "5.jpg")).convert_alpha()
+BTN_X5 = BTN_X4 + BTN_BG_margin + BG4_BTN_img.get_width()*1
+BG5_BTN = button.Button(BTN_X5, BG_BTN_HEIGHT, BG5_BTN_img, 1)
 
-BG6_BTN_img = pygame.image.load(join("assets", "Background1", "Purple.png")).convert_alpha()
-BTN_X6 = BTN_X5 + BTN_BG_margin + BG5_BTN_img.get_width()*1.5
-BG6_BTN = button.Button(BTN_X6, BG_BTN_HEIGHT, BG6_BTN_img, 1.5)
+BG6_BTN_img = pygame.image.load(join("assets", "Background2", "6.jpg")).convert_alpha()
+BTN_X6 = BTN_X5 + BTN_BG_margin + BG5_BTN_img.get_width()*1
+BG6_BTN = button.Button(BTN_X6, BG_BTN_HEIGHT, BG6_BTN_img, 1)
 
-BG7_BTN_img = pygame.image.load(join("assets", "Background1", "Yellow.png")).convert_alpha()
-BTN_X7 = BTN_X6 + BTN_BG_margin + BG6_BTN_img.get_width()*1.5
-BG7_BTN = button.Button(BTN_X7, BG_BTN_HEIGHT, BG7_BTN_img, 1.5)
+BG7_BTN_img = pygame.image.load(join("assets", "Background2", "7.jpg")).convert_alpha()
+BTN_X7 = BTN_X6 + BTN_BG_margin + BG6_BTN_img.get_width()*1
+BG7_BTN = button.Button(BTN_X7, BG_BTN_HEIGHT, BG7_BTN_img, 1)
 
 lock_img = pygame.image.load(join("assets", "Buttons", "lock.png")).convert_alpha()
-LOCK_MARGIN = 15
+LOCK_MARGIN = 0
 
 # Make all the locks as buttons -> easier to manage and remove
-lock1 = button.Button(BG1_BTN.get_x()-LOCK_MARGIN, BG1_BTN.get_y(), lock_img, 0.20)
-lock2 = button.Button(BG2_BTN.get_x()-LOCK_MARGIN, BG2_BTN.get_y(), lock_img, 0.20)
-lock3 = button.Button(BG3_BTN.get_x()-LOCK_MARGIN, BG3_BTN.get_y(), lock_img, 0.20)
-lock4 = button.Button(BG4_BTN.get_x()-LOCK_MARGIN, BG4_BTN.get_y(), lock_img, 0.20)
-lock5 = button.Button(BG5_BTN.get_x()-LOCK_MARGIN, BG5_BTN.get_y(), lock_img, 0.20)
-lock6 = button.Button(BG6_BTN.get_x()-LOCK_MARGIN, BG6_BTN.get_y(), lock_img, 0.20)
-lock7 = button.Button(BG7_BTN.get_x()-LOCK_MARGIN, BG7_BTN.get_y(), lock_img, 0.20)
+lock1 = button.Button(BG1_BTN.get_x()-LOCK_MARGIN, BG1_BTN.get_y(), lock_img, 1)
+lock2 = button.Button(BG2_BTN.get_x()-LOCK_MARGIN, BG2_BTN.get_y(), lock_img, 1)
+lock3 = button.Button(BG3_BTN.get_x()-LOCK_MARGIN, BG3_BTN.get_y(), lock_img, 1)
+lock4 = button.Button(BG4_BTN.get_x()-LOCK_MARGIN, BG4_BTN.get_y(), lock_img, 1)
+lock5 = button.Button(BG5_BTN.get_x()-LOCK_MARGIN, BG5_BTN.get_y(), lock_img, 1)
+lock6 = button.Button(BG6_BTN.get_x()-LOCK_MARGIN, BG6_BTN.get_y(), lock_img, 1)
+lock7 = button.Button(BG7_BTN.get_x()-LOCK_MARGIN, BG7_BTN.get_y(), lock_img, 1)
 
 # Make the MATH - LOGIC - COMP buttons
-MENUS_margin = 130
-SCALE1 = 0.5
+MENUS_margin = 50
+SCALE1 = 0.9
 
-MATH_BTN_img = pygame.image.load(join("assets", "Buttons", "black_button.png")).convert_alpha()
-MATH_BTN = button.Button(MENUS_margin, 30, MATH_BTN_img, 0.5)
+MATH_BTN_img = pygame.image.load(join("assets", "Buttons", "Mathematics.png")).convert_alpha()
+MATH_BTN = button.Button(MENUS_margin, 30, MATH_BTN_img, SCALE1)
 
-LOGIC_BTN_img = pygame.image.load(join("assets", "Buttons", "black_button.png")).convert_alpha()
+LOGIC_BTN_img = pygame.image.load(join("assets", "Buttons", "Logic.png")).convert_alpha()
 LOGIC_BTN = button.Button(MENUS_margin+MATH_BTN_img.get_width() * SCALE1 + MATH_BTN.get_x(), 30, LOGIC_BTN_img, SCALE1)
 
-COMP_BTN_img = pygame.image.load(join("assets", "Buttons", "black_button.png")).convert_alpha()
+COMP_BTN_img = pygame.image.load(join("assets", "Buttons", "compsci.png")).convert_alpha()
 COMP_BTN = button.Button(MENUS_margin+LOGIC_BTN_img.get_width() * SCALE1 + LOGIC_BTN.get_x(), 30, COMP_BTN_img, SCALE1)
 
 # Make the levels for each subject
 ML_img = pygame.image.load(join("assets", "Buttons", "Level.png")).convert_alpha()
-ML1 = button.Button(50, 100, ML_img, 0.8)
-ML2 = button.Button(400, 100, ML_img, 0.8)
-ML3 = button.Button(750, 100, ML_img, 0.8)
-ML4 = button.Button(50, 400, ML_img, 0.8)
-ML5 = button.Button(400, 400, ML_img, 0.8)
-ML6 = button.Button(750, 400, ML_img, 0.8)
+SCALE_levels = 0.75
+level_margin = (WIDTH - ML_img.get_width()*SCALE_levels*3)//4
+ML1 = button.Button(level_margin, 150, ML_img, SCALE_levels)
+ML2 = button.Button(level_margin*2 + ML_img.get_width()*SCALE_levels, 150, ML_img, SCALE_levels)
+ML3 = button.Button(level_margin*3 + ML_img.get_width()*SCALE_levels*2, 150, ML_img, SCALE_levels)
+ML4 = button.Button(level_margin, 400, ML_img, SCALE_levels)
+ML5 = button.Button(level_margin*2 + ML_img.get_width()*SCALE_levels, 400, ML_img, SCALE_levels)
+ML6 = button.Button(level_margin*3 + ML_img.get_width()*SCALE_levels*2, 400, ML_img, SCALE_levels)
 
 CURRENT_WIN_img = pygame.image.load(join("assets", "Buttons", "Level.png")).convert_alpha()
 CURRENT_WIN = button.Button(WIDTH//2-CURRENT_WIN_img.get_width()//2, 100,
@@ -161,13 +167,15 @@ def draw_background2(surface, number):
 
 # Defining the main method that will run and call everything
 def main(win):
-    global PAUSED, STORE, COINS, LOCKED1, LOCKED2, LOCKED3, LOCKED4, LOCKED5, LOCKED6, LOCKED7, MATH_MENU, LOGIC_MENU,\
+    global PAUSED, STORE, LOCKED1, LOCKED2, LOCKED3, LOCKED4, LOCKED5, LOCKED6, LOCKED7, MATH_MENU, LOGIC_MENU,\
         COMP_MENU, OPEN_WINDOW, DIFFICULTY, MAIN_MENU
 
     # Get the background
     background, bg_image = get_background("Blue.png")
 
     run = True
+
+    Money = coin.Coin()
 
     # This is the main loop to keep the game going
     while run:
@@ -187,48 +195,56 @@ def main(win):
         # if the game is in the STORE menu
         elif STORE:
             # Display the number of coins
-            draw_text(str(COINS) + " COINS", font, TEXT_COLOR, 10, HEIGHT - 60)
+            # draw_text(str(COINS) + " COINS", font, TEXT_COLOR, 10, HEIGHT - 60)
+            Money.draw()
 
             # If we press any background button
             if BG1_BTN.draw(win):
-                if LOCKED1 and COINS >= 25:
-                    COINS -= 25
+                if LOCKED1 and Money.value >= PRICE_BG:
+                    # COINS -= PRICE_BG
+                    Money.take(PRICE_BG)
                     LOCKED1 = False
                 elif not LOCKED1:
                     background, bg_image = get_background("Blue.png")
             if BG2_BTN.draw(win):
-                if LOCKED2 and COINS >= 25:
-                    COINS -= 25
+                if LOCKED2 and Money.value >= PRICE_BG:
+                    # COINS -= PRICE_BG
+                    Money.take(PRICE_BG)
                     LOCKED2 = False
                 elif not LOCKED2:
                     background, bg_image = get_background("Brown.png")
             if BG3_BTN.draw(win):
-                if LOCKED3 and COINS >= 25:
-                    COINS -= 25
+                if LOCKED3 and Money.value >= PRICE_BG:
+                    # COINS -= PRICE_BG
+                    Money.take(PRICE_BG)
                     LOCKED3 = False
                 elif not LOCKED3:
                     background, bg_image = get_background("Gray.png")
             if BG4_BTN.draw(win):
-                if LOCKED4 and COINS >= 25:
-                    COINS -= 25
+                if LOCKED4 and Money.value >= PRICE_BG:
+                    # COINS -= PRICE_BG
+                    Money.take(PRICE_BG)
                     LOCKED4 = False
                 elif not LOCKED4:
                     background, bg_image = get_background("Green.png")
             if BG5_BTN.draw(win):
-                if LOCKED5 and COINS >= 25:
-                    COINS -= 25
+                if LOCKED5 and Money.value >= PRICE_BG:
+                    # COINS -= PRICE_BG
+                    Money.take(PRICE_BG)
                     LOCKED5 = False
                 elif not LOCKED5:
                     background, bg_image = get_background("Pink.png")
             if BG6_BTN.draw(win):
-                if LOCKED6 and COINS >= 25:
-                    COINS -= 25
+                if LOCKED6 and Money.value >= PRICE_BG:
+                    # COINS -= PRICE_BG
+                    Money.take(PRICE_BG)
                     LOCKED6 = False
                 elif not LOCKED6:
                     background, bg_image = get_background("Purple.png")
             if BG7_BTN.draw(win):
-                if LOCKED7 and COINS >= 25:
-                    COINS -= 25
+                if LOCKED7 and Money.value >= PRICE_BG:
+                    # COINS -= PRICE_BG
+                    Money.take(PRICE_BG)
                     LOCKED7 = False
                 elif not LOCKED7:
                     background, bg_image = get_background("Yellow.png")
@@ -240,29 +256,30 @@ def main(win):
             # Check if each Background is locked or unlocked
             if LOCKED1:
                 lock1.draw(win)
-                draw_text("25", lock_font, WHITE, lock1.get_x()+47, lock1.get_y()+40)
+                draw_text(str(PRICE_BG), lock_font, WHITE, lock1.get_x()+27, lock1.get_y()+70)
             if LOCKED2:
                 lock2.draw(win)
-                draw_text("25", lock_font, WHITE, lock2.get_x()+47, lock2.get_y()+40)
+                draw_text(str(PRICE_BG), lock_font, WHITE, lock2.get_x()+27, lock1.get_y()+70)
             if LOCKED3:
                 lock3.draw(win)
-                draw_text("25", lock_font, WHITE, lock3.get_x()+47, lock3.get_y()+40)
+                draw_text(str(PRICE_BG), lock_font, WHITE, lock3.get_x()+27, lock1.get_y()+70)
             if LOCKED4:
                 lock4.draw(win)
-                draw_text("25", lock_font, WHITE, lock4.get_x()+47, lock4.get_y()+40)
+                draw_text(str(PRICE_BG), lock_font, WHITE, lock4.get_x()+27, lock1.get_y()+70)
             if LOCKED5:
                 lock5.draw(win)
-                draw_text("25", lock_font, WHITE, lock5.get_x()+47, lock5.get_y()+40)
+                draw_text(str(PRICE_BG), lock_font, WHITE, lock5.get_x()+27, lock1.get_y()+70)
             if LOCKED6:
                 lock6.draw(win)
-                draw_text("25", lock_font, WHITE, lock6.get_x()+47, lock6.get_y()+40)
+                draw_text(str(PRICE_BG), lock_font, WHITE, lock6.get_x()+27, lock1.get_y()+70)
             if LOCKED7:
                 lock7.draw(win)
-                draw_text("25", lock_font, WHITE, lock7.get_x()+47, lock7.get_y()+40)
+                draw_text(str(PRICE_BG), lock_font, WHITE, lock7.get_x()+27, lock1.get_y()+70)
 
         # if the game is NOT pause or NOT in store --> It is in the main menu
         else:
 
+            # Check if it is in the main menu
             if MAIN_MENU:
                 # If we press the math button for it's menu
                 if MATH_BTN.draw(win):
@@ -271,21 +288,22 @@ def main(win):
                     COMP_MENU = False
                     OPEN_WINDOW = False
                 # If we press the Logic button for it's menu
-                if LOGIC_BTN.draw(win):
+                elif LOGIC_BTN.draw(win):
                     MATH_MENU = False
                     LOGIC_MENU = True
                     COMP_MENU = False
                 # If we press the Computer Science button for it's menu
-                if COMP_BTN.draw(win):
+                elif COMP_BTN.draw(win):
                     MATH_MENU = False
                     LOGIC_MENU = False
                     COMP_MENU = True
 
-                if MATH_MENU:
+                elif MATH_MENU:
                     if ML1.draw(win):
                         DIFFICULTY = 1
                         OPEN_WINDOW = True
                         MAIN_MENU = False
+                        draw_text("Level 1", font, WHITE, 100, 50)
                     elif ML2.draw(win):
                         DIFFICULTY = 2
                         OPEN_WINDOW = True
@@ -307,23 +325,27 @@ def main(win):
                         OPEN_WINDOW = True
                         MAIN_MENU = False
 
-
             elif OPEN_WINDOW:
+
                 CURRENT_WIN.draw(win)
                 draw_text(str(DIFFICULTY), lock_font, WHITE, CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()//2,
                           CURRENT_WIN.get_y()+CURRENT_WIN_img.get_height()//2)
                 if X_BTN.draw(win):
                     OPEN_WINDOW = False
                     MAIN_MENU = True
+                    # this delay is important because the mouse clicks are recognizes
+                    time.sleep(JET_LAG)
+
                 if check_BTN.draw(win):
                     OPEN_WINDOW = False
                     MAIN_MENU = True
-                    COINS += 25
-
-
+                    # COINS += PRICE_BG
+                    Money.add(PRICE_BG)
+                    time.sleep(JET_LAG)
 
             # Display the number of coins
-            draw_text(str(COINS) + " COINS", font, TEXT_COLOR, 10, HEIGHT - 60)
+            # draw_text(str(COINS) + " COINS", font, TEXT_COLOR, 10, HEIGHT - 60)
+            Money.draw()
 
             # if the game is in the store menu
             if store_BTN.draw(win):
@@ -342,7 +364,8 @@ def main(win):
                 if event.key == pygame.K_ESCAPE:
                     PAUSED = not PAUSED
                 if event.key == pygame.K_p:
-                    COINS += 25
+                    # COINS += 25
+                    Money.add(25)
 
 
 # only run the main when it's ran from m
