@@ -165,6 +165,17 @@ def draw_background2(surface, number):
     pygame.display.update()
 
 
+def draw_levels():
+    x = [140, 543, 955]
+    y = [180, 440]
+    draw_text("Level 1", font, WHITE, x[0], y[0])
+    draw_text("Level 2", font, WHITE, x[1], y[0])
+    draw_text("Level 3", font, WHITE, x[2], y[0])
+    draw_text("Level 4", font, WHITE, x[0], y[1])
+    draw_text("Level 5", font, WHITE, x[1], y[1])
+    draw_text("Level 6", font, WHITE, x[2], y[1])
+
+
 # Defining the main method that will run and call everything
 def main(win):
     global PAUSED, STORE, LOCKED1, LOCKED2, LOCKED3, LOCKED4, LOCKED5, LOCKED6, LOCKED7, MATH_MENU, LOGIC_MENU,\
@@ -303,7 +314,6 @@ def main(win):
                         DIFFICULTY = 1
                         OPEN_WINDOW = True
                         MAIN_MENU = False
-                        draw_text("Level 1", font, WHITE, 100, 50)
                     elif ML2.draw(win):
                         DIFFICULTY = 2
                         OPEN_WINDOW = True
@@ -324,6 +334,7 @@ def main(win):
                         DIFFICULTY = 6
                         OPEN_WINDOW = True
                         MAIN_MENU = False
+                    draw_levels()
 
             elif OPEN_WINDOW:
 
