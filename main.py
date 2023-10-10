@@ -13,9 +13,12 @@ pygame.mouse.set_cursor(pygame.cursors.broken_x)
 WIDTH, HEIGHT = 1250, 750
 window = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 font = pygame.font.SysFont("arialblack", 40)
+input_font = pygame.font.SysFont("georgia", 30)
+user_text = ""
 lock_font = pygame.font.SysFont("arialblack", 20)
 TEXT_COLOR = (0, 0, 0)
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 
 # VARIABLES
 PRICE_BG = 25
@@ -200,10 +203,45 @@ def rand_question(difficulty):
     return quest, random_line
 
 
+def check_answer(answer, line, difficulty):
+
+    # Open the file according to the difficulty
+    f = open(join("assets", "Math Question", str(difficulty) + "ans.txt"), "r")
+
+    # loop from the first line all the way to the given line
+    for line in range(line - 1):
+        f.readline()
+
+    # read the given random line
+    ans = f.readline()
+    # Take away the last character as it represent the \n
+    ans = ans[:-1]
+
+    return answer.replace(" ", "") == ans
+
+
+def rect_around(text):
+    margin_text_x = 20
+    margin_text_y = 5
+    width_x = 4
+    width_y = 4
+    x = CURRENT_WIN.get_x() + CURRENT_WIN_img.get_width()//2 - text.get_width()//2 - margin_text_x
+    y = CURRENT_WIN.get_y() + CURRENT_WIN_img.get_height()//2 - margin_text_y
+
+    rect1 = pygame.Rect(x, y,
+                        text.get_width()+margin_text_x*2, text.get_height()+margin_text_y*2)
+
+    rect2 = pygame.Rect(x-width_x, y-width_y, text.get_width()+margin_text_x*2+width_x*2,
+                        text.get_height()+margin_text_y*2+width_y*2)
+
+    pygame.draw.rect(window, WHITE, rect2)
+    pygame.draw.rect(window, BLACK, rect1)
+
+
 # Defining the main method that will run and call everything
 def main(win):
     global PAUSED, STORE, LOCKED1, LOCKED2, LOCKED3, LOCKED4, LOCKED5, LOCKED6, LOCKED7, MATH_MENU, LOGIC_MENU,\
-        COMP_MENU, OPEN_WINDOW, DIFFICULTY, MAIN_MENU, question, line_num
+        COMP_MENU, OPEN_WINDOW, DIFFICULTY, MAIN_MENU, question, line_num, user_text
 
     # Get the background
     background, bg_image = get_background("Blue.png")
@@ -339,6 +377,7 @@ def main(win):
                         DIFFICULTY = 1
                         OPEN_WINDOW = True
                         MAIN_MENU = False
+                        user_text = ""
                         question, line_num = rand_question(DIFFICULTY)
 
                     elif ML2.draw(win):
@@ -368,8 +407,16 @@ def main(win):
                 CURRENT_WIN.draw(win)
 
                 # Display the question on the window
-                draw_text(question, lock_font, WHITE, CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()//2-50,
-                          CURRENT_WIN.get_y()+CURRENT_WIN_img.get_height()//2-50)
+                question_surface = input_font.render(question, True, WHITE)
+                draw_text(question, input_font, WHITE,
+                          CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()//2-question_surface.get_width()//2,
+                          CURRENT_WIN.get_y()+CURRENT_WIN_img.get_height()//2-75)
+
+                text_surface = input_font.render(user_text, True, WHITE)
+                position = (CURRENT_WIN.get_x() + CURRENT_WIN_img.get_width()//2-text_surface.get_width()//2,
+                            CURRENT_WIN.get_y() + CURRENT_WIN_img.get_height()//2)
+                rect_around(text_surface)
+                win.blit(text_surface, position)
 
                 if X_BTN.draw(win):
                     OPEN_WINDOW = False
@@ -378,9 +425,10 @@ def main(win):
                     time.sleep(JET_LAG)
 
                 if check_BTN.draw(win):
+                    if check_answer(user_text, line_num, DIFFICULTY):
+                        Money.add(PRICE_BG)
                     OPEN_WINDOW = False
                     MAIN_MENU = True
-                    Money.add(PRICE_BG)
                     time.sleep(JET_LAG)
 
             # Display the number of coins
@@ -406,6 +454,11 @@ def main(win):
                 if event.key == pygame.K_p:
                     # COINS += 25
                     Money.add(25)
+                if OPEN_WINDOW:
+                    if event.key == pygame.K_BACKSPACE:
+                        user_text = user_text[:-1]
+                    else:
+                        user_text += event.unicode
 
 
 # only run the main when it's ran from m
