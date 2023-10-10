@@ -4,6 +4,7 @@ import coin
 from os import listdir
 from os.path import isfile, join
 import time
+import random
 
 # Initialization and setting methods
 pygame.init()
@@ -35,6 +36,8 @@ COMP_MENU = False
 OPEN_WINDOW = False
 DIFFICULTY = 0
 JET_LAG = 0.2
+question = ""
+line_num = 1
 
 
 # Load Buttons & creating their parameters
@@ -126,12 +129,14 @@ CURRENT_WIN = button.Button(WIDTH//2-CURRENT_WIN_img.get_width()//2, 100,
                             CURRENT_WIN_img, 1)
 
 X_BTN_img = pygame.image.load(join("assets", "Buttons", "x_button.png")).convert_alpha()
-X_BTN = button.Button(CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()-100,
-                      CURRENT_WIN.get_y()+50, X_BTN_img, 0.2)
+X_BTN = button.Button(CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()-X_BTN_img.get_width()//2-10,
+                      CURRENT_WIN.get_y()-X_BTN_img.get_height()//2+10,
+                      X_BTN_img, 1)
 
 check_BTN_img = pygame.image.load(join("assets", "Buttons", "check_button.png")).convert_alpha()
-check_BTN = button.Button(CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()//2-50,
-                          CURRENT_WIN.get_y()+CURRENT_WIN_img.get_height()-150, check_BTN_img, 0.2)
+check_BTN = button.Button(CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()//2-check_BTN_img.get_width()//2,
+                          CURRENT_WIN.get_y()+CURRENT_WIN_img.get_height()-check_BTN_img.get_height()//2-10,
+                          check_BTN_img, 1)
 
 
 # FUNCTIONS
@@ -176,10 +181,29 @@ def draw_levels():
     draw_text("Level 6", font, WHITE, x[2], y[1])
 
 
+def rand_question(difficulty):
+    # Choose a random number - represent the line number
+    random_line = random.randint(1, 10)
+
+    # Open the file according to the difficulty
+    f = open(join("assets", "Math Question", str(difficulty) + ".txt"), "r")
+
+    # loop from the first line all the way to the given line
+    for line in range(random_line - 1):
+        f.readline()
+
+    # read the given random line
+    quest = f.readline()
+    # Take away the last character as it represent the \n
+    quest = quest[:-1]
+
+    return quest, random_line
+
+
 # Defining the main method that will run and call everything
 def main(win):
     global PAUSED, STORE, LOCKED1, LOCKED2, LOCKED3, LOCKED4, LOCKED5, LOCKED6, LOCKED7, MATH_MENU, LOGIC_MENU,\
-        COMP_MENU, OPEN_WINDOW, DIFFICULTY, MAIN_MENU
+        COMP_MENU, OPEN_WINDOW, DIFFICULTY, MAIN_MENU, question, line_num
 
     # Get the background
     background, bg_image = get_background("Blue.png")
@@ -200,6 +224,7 @@ def main(win):
                 pass
             if resume_BTN.draw(win):
                 PAUSED = False
+                time.sleep(JET_LAG)
             if quit_BTN.draw(win):
                 run = False
 
@@ -314,6 +339,8 @@ def main(win):
                         DIFFICULTY = 1
                         OPEN_WINDOW = True
                         MAIN_MENU = False
+                        question, line_num = rand_question(DIFFICULTY)
+
                     elif ML2.draw(win):
                         DIFFICULTY = 2
                         OPEN_WINDOW = True
@@ -337,10 +364,13 @@ def main(win):
                     draw_levels()
 
             elif OPEN_WINDOW:
-
+                # draw the current window open
                 CURRENT_WIN.draw(win)
-                draw_text(str(DIFFICULTY), lock_font, WHITE, CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()//2,
-                          CURRENT_WIN.get_y()+CURRENT_WIN_img.get_height()//2)
+
+                # Display the question on the window
+                draw_text(question, lock_font, WHITE, CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()//2-50,
+                          CURRENT_WIN.get_y()+CURRENT_WIN_img.get_height()//2-50)
+
                 if X_BTN.draw(win):
                     OPEN_WINDOW = False
                     MAIN_MENU = True
@@ -350,7 +380,6 @@ def main(win):
                 if check_BTN.draw(win):
                     OPEN_WINDOW = False
                     MAIN_MENU = True
-                    # COINS += PRICE_BG
                     Money.add(PRICE_BG)
                     time.sleep(JET_LAG)
 
