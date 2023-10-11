@@ -184,12 +184,21 @@ def draw_levels():
     draw_text("Level 6", font, WHITE, x[2], y[1])
 
 
-def rand_question(difficulty):
+def rand_question(difficulty, subject):
     # Choose a random number - represent the line number
     random_line = random.randint(1, 10)
 
     # Open the file according to the difficulty
-    f = open(join("assets", "Math Question", str(difficulty) + ".txt"), "r")
+    if subject == "M":
+        section = "Math Questions"
+    elif subject == "L":
+        section = "Logic Questions"
+    elif subject == "C":
+        section = "Comp Questions"
+    else:
+        section = ""
+
+    f = open(join("assets", section, str(difficulty) + ".txt"), "r")
 
     # loop from the first line all the way to the given line
     for line in range(random_line - 1):
@@ -206,7 +215,7 @@ def rand_question(difficulty):
 def check_answer(answer, line, difficulty):
 
     # Open the file according to the difficulty
-    f = open(join("assets", "Math Question", str(difficulty) + "ans.txt"), "r")
+    f = open(join("assets", "Math Questions", str(difficulty) + "ans.txt"), "r")
 
     # loop from the first line all the way to the given line
     for line in range(line - 1):
@@ -361,16 +370,20 @@ def main(win):
                     LOGIC_MENU = False
                     COMP_MENU = False
                     OPEN_WINDOW = False
+
                 # If we press the Logic button for it's menu
                 elif LOGIC_BTN.draw(win):
                     MATH_MENU = False
                     LOGIC_MENU = True
                     COMP_MENU = False
+                    OPEN_WINDOW = False
+
                 # If we press the Computer Science button for it's menu
                 elif COMP_BTN.draw(win):
                     MATH_MENU = False
                     LOGIC_MENU = False
                     COMP_MENU = True
+                    OPEN_WINDOW = False
 
                 elif MATH_MENU:
                     if ML1.draw(win):
@@ -378,28 +391,115 @@ def main(win):
                         OPEN_WINDOW = True
                         MAIN_MENU = False
                         user_text = ""
-                        question, line_num = rand_question(DIFFICULTY)
-
+                        question, line_num = rand_question(DIFFICULTY, "M")
                     elif ML2.draw(win):
                         DIFFICULTY = 2
                         OPEN_WINDOW = True
                         MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "M")
                     elif ML3.draw(win):
                         DIFFICULTY = 3
                         OPEN_WINDOW = True
                         MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "M")
                     elif ML4.draw(win):
                         DIFFICULTY = 4
                         OPEN_WINDOW = True
                         MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "M")
                     elif ML5.draw(win):
                         DIFFICULTY = 5
                         OPEN_WINDOW = True
                         MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "M")
                     elif ML6.draw(win):
                         DIFFICULTY = 6
                         OPEN_WINDOW = True
                         MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "M")
+                    draw_levels()
+
+                elif LOGIC_MENU:
+                    if ML1.draw(win):
+                        DIFFICULTY = 1
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "L")
+                    elif ML2.draw(win):
+                        DIFFICULTY = 2
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "L")
+                    elif ML3.draw(win):
+                        DIFFICULTY = 3
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "L")
+                    elif ML4.draw(win):
+                        DIFFICULTY = 4
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "L")
+                    elif ML5.draw(win):
+                        DIFFICULTY = 5
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "L")
+                    elif ML6.draw(win):
+                        DIFFICULTY = 6
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "L")
+                    draw_levels()
+
+                elif COMP_MENU:
+                    if ML1.draw(win):
+                        DIFFICULTY = 1
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "C")
+                    elif ML2.draw(win):
+                        DIFFICULTY = 2
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "C")
+                    elif ML3.draw(win):
+                        DIFFICULTY = 3
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "C")
+                    elif ML4.draw(win):
+                        DIFFICULTY = 4
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "C")
+                    elif ML5.draw(win):
+                        DIFFICULTY = 5
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "C")
+                    elif ML6.draw(win):
+                        DIFFICULTY = 6
+                        OPEN_WINDOW = True
+                        MAIN_MENU = False
+                        user_text = ""
+                        question, line_num = rand_question(DIFFICULTY, "C")
                     draw_levels()
 
             elif OPEN_WINDOW:
