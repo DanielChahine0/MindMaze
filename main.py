@@ -41,6 +41,8 @@ DIFFICULTY = 0
 JET_LAG = 0.2
 question = ""
 line_num = 1
+subject = "M"
+check_solution = False
 
 
 # Load Buttons & creating their parameters
@@ -212,10 +214,16 @@ def rand_question(difficulty, subject):
     return quest, random_line
 
 
-def check_answer(answer, line, difficulty):
-
+def check_answer(answer, line, difficulty, sub):
+    section = ""
+    if sub == "M":
+        section = "Math Questions"
+    elif sub == "L":
+        section = "Logic Questions"
+    elif sub == "C":
+        section = "Comp Questions"
     # Open the file according to the difficulty
-    f = open(join("assets", "Math Questions", str(difficulty) + "ans.txt"), "r")
+    f = open(join("assets", section, str(difficulty) + "ans.txt"), "r")
 
     # loop from the first line all the way to the given line
     for line in range(line - 1):
@@ -250,7 +258,7 @@ def rect_around(text):
 # Defining the main method that will run and call everything
 def main(win):
     global PAUSED, STORE, LOCKED1, LOCKED2, LOCKED3, LOCKED4, LOCKED5, LOCKED6, LOCKED7, MATH_MENU, LOGIC_MENU,\
-        COMP_MENU, OPEN_WINDOW, DIFFICULTY, MAIN_MENU, question, line_num, user_text
+        COMP_MENU, OPEN_WINDOW, DIFFICULTY, MAIN_MENU, question, line_num, user_text, subject, check_solution
 
     # Get the background
     background, bg_image = get_background("Blue.png")
@@ -391,39 +399,44 @@ def main(win):
                         OPEN_WINDOW = True
                         MAIN_MENU = False
                         user_text = ""
-                        question, line_num = rand_question(DIFFICULTY, "M")
+                        subject = "M"
+                        question, line_num = rand_question(DIFFICULTY, subject)
                     elif ML2.draw(win):
                         DIFFICULTY = 2
                         OPEN_WINDOW = True
                         MAIN_MENU = False
                         user_text = ""
-                        question, line_num = rand_question(DIFFICULTY, "M")
+                        subject = "M"
+                        question, line_num = rand_question(DIFFICULTY, subject)
                     elif ML3.draw(win):
                         DIFFICULTY = 3
                         OPEN_WINDOW = True
                         MAIN_MENU = False
                         user_text = ""
-                        question, line_num = rand_question(DIFFICULTY, "M")
+                        subject = "M"
+                        question, line_num = rand_question(DIFFICULTY, subject)
                     elif ML4.draw(win):
                         DIFFICULTY = 4
                         OPEN_WINDOW = True
                         MAIN_MENU = False
                         user_text = ""
-                        question, line_num = rand_question(DIFFICULTY, "M")
+                        subject = "M"
+                        question, line_num = rand_question(DIFFICULTY, subject)
                     elif ML5.draw(win):
                         DIFFICULTY = 5
                         OPEN_WINDOW = True
                         MAIN_MENU = False
                         user_text = ""
-                        question, line_num = rand_question(DIFFICULTY, "M")
+                        subject = "M"
+                        question, line_num = rand_question(DIFFICULTY, subject)
                     elif ML6.draw(win):
                         DIFFICULTY = 6
                         OPEN_WINDOW = True
                         MAIN_MENU = False
                         user_text = ""
-                        question, line_num = rand_question(DIFFICULTY, "M")
+                        subject = "M"
+                        question, line_num = rand_question(DIFFICULTY, subject)
                     draw_levels()
-
                 elif LOGIC_MENU:
                     if ML1.draw(win):
                         DIFFICULTY = 1
@@ -462,7 +475,6 @@ def main(win):
                         user_text = ""
                         question, line_num = rand_question(DIFFICULTY, "L")
                     draw_levels()
-
                 elif COMP_MENU:
                     if ML1.draw(win):
                         DIFFICULTY = 1
@@ -508,6 +520,7 @@ def main(win):
 
                 # Display the question on the window
                 question_surface = input_font.render(question, True, WHITE)
+
                 draw_text(question, input_font, WHITE,
                           CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()//2-question_surface.get_width()//2,
                           CURRENT_WIN.get_y()+CURRENT_WIN_img.get_height()//2-75)
@@ -521,15 +534,17 @@ def main(win):
                 if X_BTN.draw(win):
                     OPEN_WINDOW = False
                     MAIN_MENU = True
-                    # this delay is important because the mouse clicks are recognizes
+
+                    # this delay is important because the mouse clicks multiple time, and it is recognized
                     time.sleep(JET_LAG)
 
-                if check_BTN.draw(win):
-                    if check_answer(user_text, line_num, DIFFICULTY):
+                if check_BTN.draw(win) or check_solution:
+                    if check_answer(user_text, line_num, DIFFICULTY, subject):
                         Money.add(PRICE_BG)
                     OPEN_WINDOW = False
                     MAIN_MENU = True
                     time.sleep(JET_LAG)
+                    check_solution = False
 
             # Display the number of coins
             # draw_text(str(COINS) + " COINS", font, TEXT_COLOR, 10, HEIGHT - 60)
@@ -555,7 +570,10 @@ def main(win):
                     # COINS += 25
                     Money.add(25)
                 if OPEN_WINDOW:
-                    if event.key == pygame.K_BACKSPACE:
+                    if event.key == pygame.K_RETURN:
+                        check_solution = True
+
+                    elif event.key == pygame.K_BACKSPACE:
                         user_text = user_text[:-1]
                     else:
                         user_text += event.unicode
