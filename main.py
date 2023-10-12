@@ -128,6 +128,7 @@ ML3 = button.Button(level_margin*3 + ML_img.get_width()*SCALE_levels*2, 150, ML_
 ML4 = button.Button(level_margin, 400, ML_img, SCALE_levels)
 ML5 = button.Button(level_margin*2 + ML_img.get_width()*SCALE_levels, 400, ML_img, SCALE_levels)
 ML6 = button.Button(level_margin*3 + ML_img.get_width()*SCALE_levels*2, 400, ML_img, SCALE_levels)
+LEVEL_LIST = [ML1, ML2, ML3, ML4, ML5, ML6]
 
 CURRENT_WIN_img = pygame.image.load(join("assets", "Buttons", "Level.png")).convert_alpha()
 CURRENT_WIN = button.Button(WIDTH//2-CURRENT_WIN_img.get_width()//2, 100,
@@ -142,6 +143,9 @@ check_BTN_img = pygame.image.load(join("assets", "Buttons", "check_button.png"))
 check_BTN = button.Button(CURRENT_WIN.get_x()+CURRENT_WIN_img.get_width()//2-check_BTN_img.get_width()//2,
                           CURRENT_WIN.get_y()+CURRENT_WIN_img.get_height()-check_BTN_img.get_height()//2-10,
                           check_BTN_img, 1)
+
+GOOD_STAR_img = pygame.image.load(join("assets", "Buttons", "good_star.png")).convert_alpha()
+BAD_STAR_img = pygame.image.load(join("assets", "Buttons", "bad_star.png")).convert_alpha()
 
 
 # FUNCTIONS
@@ -186,16 +190,16 @@ def draw_levels():
     draw_text("Level 6", font, WHITE, x[2], y[1])
 
 
-def rand_question(difficulty, subject):
+def rand_question(difficulty, sub):
     # Choose a random number - represent the line number
     random_line = random.randint(1, 3)
 
     # Open the file according to the difficulty
-    if subject == "M":
+    if sub == "M":
         section = "Math Questions"
-    elif subject == "L":
+    elif sub == "L":
         section = "Logic Questions"
-    elif subject == "C":
+    elif sub == "C":
         section = "Comp Questions"
     else:
         section = ""
@@ -253,6 +257,51 @@ def rect_around(text):
 
     pygame.draw.rect(window, WHITE, rect2)
     pygame.draw.rect(window, BLACK, rect1)
+
+
+def draw_bad_star(level):
+    x = LEVEL_LIST[level - 1].get_x() + ML_img.get_width() * 0.75 // 2 - GOOD_STAR_img.get_width() // 2
+    y = LEVEL_LIST[level - 1].get_y() + ML_img.get_height() // 2 - GOOD_STAR_img.get_height() // 2 + 10
+    STAR = button.Button(x, y, BAD_STAR_img, 1)
+    return STAR
+
+
+def draw_good_star(level):
+    x = LEVEL_LIST[level-1].get_x() + ML_img.get_width()*0.75//2 - GOOD_STAR_img.get_width()//2
+    y = LEVEL_LIST[level-1].get_y() + ML_img.get_height()//2 - GOOD_STAR_img.get_height()//2+10
+    STAR = button.Button(x, y, GOOD_STAR_img, 1)
+    return STAR
+
+
+def draw_stars(sub, level):
+    f = open(join("assets", "Stars", "Completed Questions "+sub+".txt", ), "r")
+
+    # loop from the first line all the way to the given line
+    for line in range(level - 1):
+        f.readline()
+
+    # read the given random line
+    status = f.readline()
+    status = status[:-1]
+
+    # if it is completed
+    if status == "1":
+        star = draw_good_star(level)
+        star.draw(window)
+    elif status == "0":
+        star = draw_bad_star(level)
+        star.draw(window)
+
+
+def reset_status():
+    f1 = open(join("assets", "Stars", "Completed Questions M.txt", ), "w")
+    f2 = open(join("assets", "Stars", "Completed Questions L.txt", ), "w")
+    f3 = open(join("assets", "Stars", "Completed Questions C.txt", ), "w")
+
+    for i in range(6):
+        f1.write("0\n")
+        f2.write("0\n")
+        f3.write("0\n")
 
 
 # Defining the main method that will run and call everything
@@ -394,6 +443,7 @@ def main(win):
                     OPEN_WINDOW = False
 
                 elif MATH_MENU:
+
                     if ML1.draw(win):
                         DIFFICULTY = 1
                         OPEN_WINDOW = True
@@ -437,6 +487,8 @@ def main(win):
                         subject = "M"
                         question, line_num = rand_question(DIFFICULTY, subject)
                     draw_levels()
+                    for i in range(1, 7):
+                        draw_stars("M", i)
                 elif LOGIC_MENU:
                     if ML1.draw(win):
                         DIFFICULTY = 1
@@ -481,6 +533,9 @@ def main(win):
                         subject = "L"
                         question, line_num = rand_question(DIFFICULTY, subject)
                     draw_levels()
+                    for i in range(1, 7):
+                        draw_stars("L", i)
+
                 elif COMP_MENU:
                     if ML1.draw(win):
                         DIFFICULTY = 1
@@ -525,6 +580,8 @@ def main(win):
                         subject = "C"
                         question, line_num = rand_question(DIFFICULTY, subject)
                     draw_levels()
+                    for i in range(1, 7):
+                        draw_stars("C", i)
 
             elif OPEN_WINDOW:
                 # draw the current window open
@@ -578,9 +635,6 @@ def main(win):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     PAUSED = not PAUSED
-                if event.key == pygame.K_p:
-                    # COINS += 25
-                    Money.add(25)
                 if OPEN_WINDOW:
                     if event.key == pygame.K_RETURN:
                         check_solution = True
@@ -589,6 +643,11 @@ def main(win):
                         user_text = user_text[:-1]
                     else:
                         user_text += event.unicode
+                elif event.key == pygame.K_p:
+                    # COINS += 25
+                    Money.add(25)
+                elif event.key == pygame.K_r:
+                    reset_status()
 
 
 # only run the main when it's ran from m
