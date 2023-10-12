@@ -305,6 +305,43 @@ def reset_status():
 
 
 # Defining the main method that will run and call everything
+def grey_check(difficulty, sub):
+    f = open(join("assets", "Stars", "Completed Questions " + sub + ".txt", ), "r")
+
+    for line in range(difficulty - 1):
+        f.readline()
+
+    # read the given random line
+    status = f.readline()
+    status = status[:-1]
+
+    # if it is completed
+    if status == "1":
+        return False
+    elif status == "0":
+        return True
+
+
+def change_to_gold(difficulty, sub):
+    f = open(join("assets", "Stars", "Completed Questions " + sub + ".txt", ), "r")
+    previous_inf = []
+    for line in range(6):
+        previous_inf.append(f.readline())
+    f.close()
+
+    print(previous_inf)
+    previous_inf[difficulty-1] = "1\n"
+    print(previous_inf)
+
+    f = open(join("assets", "Stars", "Completed Questions " + sub + ".txt", ), "w")
+    for line in range(6):
+        f.write(previous_inf[line])
+
+
+    # read the given random line
+    # status = f.readline()
+
+
 def main(win):
     global PAUSED, STORE, LOCKED1, LOCKED2, LOCKED3, LOCKED4, LOCKED5, LOCKED6, LOCKED7, MATH_MENU, LOGIC_MENU,\
         COMP_MENU, OPEN_WINDOW, DIFFICULTY, MAIN_MENU, question, line_num, user_text, subject, check_solution
@@ -609,7 +646,11 @@ def main(win):
 
                 if check_BTN.draw(win) or check_solution:
                     if check_answer(user_text, line_num, DIFFICULTY, subject):
-                        Money.add(PRICE_BG)
+                        if grey_check(DIFFICULTY, subject):
+                            Money.add(10)
+                            change_to_gold(DIFFICULTY, subject)
+                        else:
+                            Money.add(2)
                     OPEN_WINDOW = False
                     MAIN_MENU = True
                     time.sleep(JET_LAG)
