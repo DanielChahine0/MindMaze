@@ -1,5 +1,13 @@
 import pygame
-from main import draw_text, HEIGHT
+
+
+WIDTH, HEIGHT = 1250, 750
+window = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+
+
+def draw_text(text, fonts, text_col, x, y):
+    img = fonts.render(text, True, text_col)
+    window.blit(img, (x, y))
 
 
 class Coin:

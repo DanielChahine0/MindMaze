@@ -1,4 +1,6 @@
 import pygame
+import sys
+import asyncio
 import button
 import coin
 from os import listdir
@@ -344,11 +346,12 @@ def load_question(sub, level):
     if sub == "C":
         section = "Comp Questions"
     question_img = pygame.image.load(join("assets", section, str(level)+".png")).convert_alpha()
-    q = button.Button(WIDTH//2-question_img.get_width()//2, CURRENT_WIN.get_y()+CURRENT_WIN_img.get_height()+100, question_img, 1)
+    q = button.Button(WIDTH//2-question_img.get_width()//2, CURRENT_WIN.get_y()+CURRENT_WIN_img.get_height()+100,
+                      question_img, 1)
     q.draw(window)
 
 
-def main(win):
+async def main(win):
     global PAUSED, STORE, LOCKED1, LOCKED2, LOCKED3, LOCKED4, LOCKED5, LOCKED6, LOCKED7, MATH_MENU, LOGIC_MENU,\
         COMP_MENU, OPEN_WINDOW, DIFFICULTY, MAIN_MENU, question, line_num, user_text, subject, check_solution
 
@@ -699,7 +702,9 @@ def main(win):
                 elif event.key == pygame.K_r:
                     reset_status()
 
+        await asyncio.sleep(0)
+
 
 # only run the main when it's ran from m
 if __name__ == "__main__":
-    main(window)
+    asyncio.run(main(window))
