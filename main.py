@@ -705,6 +705,6 @@ async def main(win):
         await asyncio.sleep(0)
 
 
-# only run the main when it's ran from m
-if __name__ == "__main__":
-    asyncio.run(main(window))
+# only run the main when it's ran from main
+#if __name__ == "__main__":
+asyncio.run(main(window))
