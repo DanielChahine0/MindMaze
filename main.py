@@ -131,7 +131,7 @@ ML6 = button.Button(level_margin*3 + ML_img.get_width()*SCALE_levels*2, 400, ML_
 LEVEL_LIST = [ML1, ML2, ML3, ML4, ML5, ML6]
 
 CURRENT_WIN_img = pygame.image.load(join("assets", "Buttons", "Level.png")).convert_alpha()
-CURRENT_WIN = button.Button(WIDTH//2-CURRENT_WIN_img.get_width()//2, 100,
+CURRENT_WIN = button.Button(WIDTH//2-CURRENT_WIN_img.get_width()//2, 50,
                             CURRENT_WIN_img, 1)
 
 X_BTN_img = pygame.image.load(join("assets", "Buttons", "x_button.png")).convert_alpha()
@@ -329,17 +329,23 @@ def change_to_gold(difficulty, sub):
         previous_inf.append(f.readline())
     f.close()
 
-    print(previous_inf)
+    # change the current level to one (gold)
     previous_inf[difficulty-1] = "1\n"
-    print(previous_inf)
 
     f = open(join("assets", "Stars", "Completed Questions " + sub + ".txt", ), "w")
     for line in range(6):
         f.write(previous_inf[line])
 
 
-    # read the given random line
-    # status = f.readline()
+def load_question(sub, level):
+    section = ""
+    if sub == "L":
+        section = "Logic Questions"
+    if sub == "C":
+        section = "Comp Questions"
+    question_img = pygame.image.load(join("assets", section, str(level)+".png")).convert_alpha()
+    q = button.Button(WIDTH//2-question_img.get_width()//2, CURRENT_WIN.get_y()+CURRENT_WIN_img.get_height()+100, question_img, 1)
+    q.draw(window)
 
 
 def main(win):
@@ -534,6 +540,7 @@ def main(win):
                         user_text = ""
                         subject = "L"
                         question, line_num = rand_question(DIFFICULTY, subject)
+
                     elif ML2.draw(win):
                         DIFFICULTY = 2
                         OPEN_WINDOW = True
@@ -636,6 +643,8 @@ def main(win):
                             CURRENT_WIN.get_y() + CURRENT_WIN_img.get_height()//2)
                 rect_around(text_surface)
                 win.blit(text_surface, position)
+                if subject != "M":
+                    load_question(subject, DIFFICULTY)
 
                 if X_BTN.draw(win):
                     OPEN_WINDOW = False
