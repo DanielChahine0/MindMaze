@@ -535,6 +535,7 @@ async def main(win):
                     draw_levels()
                     for i in range(1, 7):
                         draw_stars("M", i)
+
                 elif LOGIC_MENU:
                     if ML1.draw(win):
                         DIFFICULTY = 1
@@ -706,5 +707,5 @@ async def main(win):
 
 
 # only run the main when it's ran from main
-#if __name__ == "__main__":
-asyncio.run(main(window))
+if __name__ == "__main__":
+    asyncio.run(main(window))
